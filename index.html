@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профориентация 2.0 — Тест с ИИ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --bg-color: #0b0d17;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --primary-color: #00f3ff;
+            --secondary-color: #bc13fe;
+            --text-color: #ffffff;
+            --accent-a: #ff0055;
+            --accent-b: #00f3ff;
+            --accent-v: #00ff9d;
+            --accent-g: #ffe600;
+            --accent-d: #ff6b35;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.2) 0%, transparent 20%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .school-photo-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 25px auto;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.25), 0 0 0 1px rgba(0,243,255,0.2);
+        }
+
+        .school-photo {
+            width: 100%;
+            display: block;
+            border-radius: 18px;
+            filter: brightness(0.92) saturate(1.1);
+        }
+
+        .school-photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(11,13,23,0.85) 100%);
+            border-radius: 18px;
+        }
+
+        .school-name {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border: 1px solid var(--primary-color);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 30px;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .question-count-badge {
+            display: inline-block;
+            background: rgba(188, 19, 254, 0.2);
+            border: 1px solid var(--secondary-color);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        /* Progress bar */
+        .progress-bar-wrap {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            height: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s forwards;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.1);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            line-height: 1.4;
+        }
+
+        .question-category {
+            display: inline-block;
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(188, 19, 254, 0.15);
+            border: 1px solid rgba(188, 19, 254, 0.4);
+            color: #d070ff;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .option-label:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        input[type="radio"] {
+            accent-color: var(--primary-color);
+            margin-right: 15px;
+            margin-top: 4px;
+            transform: scale(1.2);
+            flex-shrink: 0;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 30px;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
+        }
+
+        /* RESULT */
+        #result-container {
+            display: none;
+            text-align: center;
+            animation: zoomIn 0.5s ease;
+        }
+
+        .result-card {
+            background: rgba(10, 10, 20, 0.9);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .result-type {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .result-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .info-block {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .info-title {
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .info-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #eee;
+        }
+
+        .info-list li { margin-bottom: 5px; }
+
+        /* AI BLOCK */
+        .ai-block {
+            background: linear-gradient(135deg, rgba(188,19,254,0.1), rgba(0,243,255,0.1));
+            border: 1px solid rgba(188,19,254,0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .ai-block-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-pulse {
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        .ai-text {
+            color: #ddd;
+            line-height: 1.7;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .ai-loading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        .ai-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0,243,255,0.2);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .score-chart {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .score-bar-item {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .score-bar-label {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .score-bar-track {
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .score-bar-fill {
+            width: 100%;
+            border-radius: 5px;
+            transition: height 1s ease;
+        }
+
+        .score-bar-value {
+            font-size: 0.8rem;
+            color: #fff;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+
+        .restart-btn {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 20px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .restart-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes shine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .school-name { font-size: 0.75rem; padding: 6px 15px; }
+            .question-card { padding: 15px; }
+            .result-card { padding: 20px; }
+            .result-type { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="school-photo-wrap">
+            <img src="school.jpg" alt="МБОУ Образовательный комплекс № 5" class="school-photo" />
+            <div class="school-photo-overlay"></div>
+        </div>
+        <div class="school-name">МБОУ г. Пушкино «Образовательный комплекс № 5»</div>
+        <h1>Профориентация 2.0</h1>
+        <div class="subtitle">Узнай своё будущее с помощью ИИ-теста</div>
+        <div class="question-count-badge">✦ 30 вопросов · 5 направлений · ИИ-анализ ✦</div>
+    </header>
+
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+
+    <div id="quiz-form"></div>
+
+    <button class="submit-btn" onclick="calculateResult()">🚀 Получить ИИ-рекомендации</button>
+
+    <div id="result-container">
+        <div class="result-card">
+            <h2 class="result-type" id="res-type"></h2>
+            <p class="result-desc" id="res-desc"></p>
+
+            <!-- Score chart -->
+            <div class="info-block">
+                <span class="info-title">📊 Твой профиль по всем направлениям:</span>
+                <div class="score-chart" id="score-chart"></div>
+            </div>
+
+            <!-- AI Recommendations -->
+            <div class="ai-block">
+                <div class="ai-block-title">
+                    <span class="ai-pulse"></span>
+                    🤖 Персональный анализ от ИИ
+                </div>
+                <div id="ai-recommendation">
+                    <div class="ai-loading">
+                        <div class="ai-spinner"></div>
+                        <span>ИИ анализирует твои ответы и готовит персональные рекомендации…</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <span class="info-title">💼 Понятные профессии:</span>
+                <ul class="info-list" id="res-jobs"></ul>
+            </div>
+
+            <div class="info-block">
+                <span class="info-title">🚀 Профессии будущего:</span>
+                <ul class="info-list" id="res-future"></ul>
+            </div>
+
+            <div class="info-block">
+                <span class="info-title">🛠️ Попробуй сейчас:</span>
+                <ul class="info-list" id="res-try"></ul>
+            </div>
+
+            <div class="info-block">
+                <span class="info-title">📍 Где попробовать в МО:</span>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;" id="res-place"></p>
+            </div>
+
+            <button class="restart-btn" onclick="location.reload()">↺ Пройти заново</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // ВОПРОСЫ: 30 штук, 5 типов (A,B,V,G,D), 6 вопросов на тип
+    // ============================================================
+    const questions = [
+        // ── Q1 ──
+        {
+            category: "Свободное время",
+            q: "Что тебе интереснее делать в свободное время?",
+            options: [
+                { text: "Рисовать, фотографировать, снимать видео или оформлять красивые вещи", type: "A" },
+                { text: "Собирать конструкторы, разбираться в технике или играть в логические игры", type: "B" },
+                { text: "Помогать друзьям, общаться в компании или участвовать в мероприятиях", type: "V" },
+                { text: "Читать энциклопедии, наблюдать за природой или искать ответы на вопросы", type: "G" },
+                { text: "Заниматься спортом, танцевать, бегать или играть в активные игры", type: "D" }
+            ]
+        },
+        // ── Q2 ──
+        {
+            category: "Школьный проект",
+            q: "Если бы ты создал(а) что-то полезное для школы, это было бы:",
+            options: [
+                { text: "Школьная газета, плакат к празднику или оформление кабинета", type: "A" },
+                { text: "Расписание на экране, таблица для учёта книг или простой сайт", type: "B" },
+                { text: "Клуб по интересам, помощь первоклассникам или сбор вещей для приюта", type: "V" },
+                { text: "Карта деревьев школьного двора, исследование или мониторинг экологии", type: "G" },
+                { text: "Спортивная секция, танцевальный флешмоб или турнир между классами", type: "D" }
+            ]
+        },
+        // ── Q3 ──
+        {
+            category: "Роль в команде",
+            q: "В групповом проекте тебе ближе роль:",
+            options: [
+                { text: "Придумать идею, нарисовать эскизы, выбрать цвета и шрифты", type: "A" },
+                { text: "Собрать техническую часть: презентацию, таблицы, настроить оборудование", type: "B" },
+                { text: "Распределить задания, поддержать тех, кто сомневается, договориться с учителем", type: "V" },
+                { text: "Найти информацию, проверить факты и сделать аналитические выводы", type: "G" },
+                { text: "Организовать активную часть, провести разминку или показать что-то в движении", type: "D" }
+            ]
+        },
+        // ── Q4 ──
+        {
+            category: "Тип задач",
+            q: "Тебе нравится решать задачи, где:",
+            options: [
+                { text: "Можно придумать что-то новое и красивое", type: "A" },
+                { text: "Нужно собрать всё по шагам, как пазл или конструктор", type: "B" },
+                { text: "Важно понять другого человека и помочь ему", type: "V" },
+                { text: "Требуется найти информацию и разобраться в причинах", type: "G" },
+                { text: "Нужно действовать быстро, ловко и показывать физические навыки", type: "D" }
+            ]
+        },
+        // ── Q5 ──
+        {
+            category: "Гордость",
+            q: "Что вызывает у тебя чувство гордости?",
+            options: [
+                { text: "Когда кто-то говорит: «Как здорово ты нарисовал(а)!»", type: "A" },
+                { text: "Когда ты сам(а) разобрался(ась) в сложной задаче или починил(а) что-то", type: "B" },
+                { text: "Когда тебе благодарят за помощь или говорят: «Ты хороший друг»", type: "V" },
+                { text: "Когда ты нашёл(а) ответ, который никто не знал", type: "G" },
+                { text: "Когда ты победил(а) в соревновании или красиво выступил(а)", type: "D" }
+            ]
+        },
+        // ── Q6 ──
+        {
+            category: "Любимый урок",
+            q: "Какой урок в школе тебе нравится больше всего?",
+            options: [
+                { text: "ИЗО, музыка, технология — где создаёшь что-то своими руками", type: "A" },
+                { text: "Информатика, математика, физика — логика и решение задач", type: "B" },
+                { text: "Литература, обществознание, классный час — о людях и обществе", type: "V" },
+                { text: "Биология, география, химия — узнаём, как устроен мир", type: "G" },
+                { text: "Физкультура, хореография — где можно двигаться и показывать навыки", type: "D" }
+            ]
+        },
+        // ── Q7 ──
+        {
+            category: "Подработка",
+            q: "Если бы тебе предложили подработку, ты бы выбрал(а):",
+            options: [
+                { text: "Оформить витрину магазина или нарисовать логотип для кафе", type: "A" },
+                { text: "Помочь настроить технику или разработать простой сайт", type: "B" },
+                { text: "Провести мастер-класс или помочь с уроками младшим", type: "V" },
+                { text: "Провести экскурсию по историческому месту или написать обзор", type: "G" },
+                { text: "Стать вожатым в лагере или помощником тренера в секции", type: "D" }
+            ]
+        },
+        // ── Q8 ──
+        {
+            category: "Смысл работы",
+            q: "Что для тебя важнее всего в будущей работе?",
+            options: [
+                { text: "Создавать что-то красивое, что останется в мире надолго", type: "A" },
+                { text: "Решать сложные технические задачи и видеть работающий результат", type: "B" },
+                { text: "Помогать людям чувствовать себя лучше и быть рядом", type: "V" },
+                { text: "Открывать новое, изучать и делиться знаниями с другими", type: "G" },
+                { text: "Быть активным, здоровым и вдохновлять других своим примером", type: "D" }
+            ]
+        },
+        // ── Q9 ──
+        {
+            category: "Твой герой",
+            q: "Какой герой тебе ближе всего?",
+            options: [
+                { text: "Художник, фотограф, модельер — тот, кто создаёт красоту", type: "A" },
+                { text: "Инженер, программист, изобретатель — тот, кто создаёт технологии", type: "B" },
+                { text: "Учитель, врач, вожатый — тот, кто помогает людям", type: "V" },
+                { text: "Учёный, следователь, натуралист — тот, кто ищет правду", type: "G" },
+                { text: "Спортсмен, тренер, хореограф — тот, кто развивает тело и дух", type: "D" }
+            ]
+        },
+        // ── Q10 ──
+        {
+            category: "Суперспособность",
+            q: "Если бы у тебя был суперскилл, какой бы ты выбрал(а)?",
+            options: [
+                { text: "Уметь рисовать всё, что представляешь, и создавать красивые вещи", type: "A" },
+                { text: "Уметь чинить любую технику и создавать работающие устройства", type: "B" },
+                { text: "Уметь понимать людей и помогать им решать любые проблемы", type: "V" },
+                { text: "Уметь находить любую информацию и видеть то, чего не видят другие", type: "G" },
+                { text: "Уметь двигаться идеально, быть сильным(ой) и выносливым(ой)", type: "D" }
+            ]
+        },
+        // ── Q11 ──
+        {
+            category: "Через 10 лет",
+            q: "Где ты видишь себя через 10 лет?",
+            options: [
+                { text: "В творческой студии, на съёмочной площадке или в дизайнерской мастерской", type: "A" },
+                { text: "В офисе, в лаборатории или за пультом управления сложной системой", type: "B" },
+                { text: "В школе, больнице, НКО — там, где много общения и помощи людям", type: "V" },
+                { text: "В научном центре, заповеднике или архиве — там, где можно исследовать", type: "G" },
+                { text: "На стадионе, в фитнес-клубе, на сцене или спортивной базе", type: "D" }
+            ]
+        },
+        // ── Q12 ──
+        {
+            category: "День стажировки",
+            q: "Тебя пригласили на день стажировки. Куда ты идёшь?",
+            options: [
+                { text: "В рекламное агентство, где создают ролики и логотипы для брендов", type: "A" },
+                { text: "На завод, где строят электромобили и роботизированные линии", type: "B" },
+                { text: "В городскую службу психологической помощи подросткам", type: "V" },
+                { text: "В метеостанцию или лабораторию, где изучают климат и экологию", type: "G" },
+                { text: "На базу МЧС или в зал, где тренируются спортивные профессионалы", type: "D" }
+            ]
+        },
+        // ── Q13 ──
+        {
+            category: "Кризисная ситуация",
+            q: "На улице произошёл инцидент. Что ты сделаешь первым(ой)?",
+            options: [
+                { text: "Достану телефон и сниму качественное видео для блога или новостей", type: "A" },
+                { text: "Позвоню 112, чётко назову адрес и опишу ситуацию по шагам", type: "B" },
+                { text: "Подойду к пострадавшему, успокою его и останусь рядом до помощи", type: "V" },
+                { text: "Постараюсь понять причины произошедшего и запомню все детали", type: "G" },
+                { text: "Если нужна физическая помощь — буду действовать быстро и решительно", type: "D" }
+            ]
+        },
+        // ── Q14 ──
+        {
+            category: "Мечта о профессии",
+            q: "Какая профессия будущего тебя притягивает больше всего?",
+            options: [
+                { text: "Архитектор виртуальных миров (создаёт пространства для игр и кино)", type: "A" },
+                { text: "Инженер кибербезопасности (защищает данные и системы от хакеров)", type: "B" },
+                { text: "Семейный психолог или школьный карьерный консультант", type: "V" },
+                { text: "Биоинформатик (анализирует ДНК с помощью компьютеров)", type: "G" },
+                { text: "Персональный тренер звёзд или хореограф бродвейских мюзиклов", type: "D" }
+            ]
+        },
+        // ── Q15 ──
+        {
+            category: "Свой проект",
+            q: "Ты решил(а) запустить собственный проект. Что это будет?",
+            options: [
+                { text: "Канал на YouTube с авторским контентом или онлайн-магазин арт-работ", type: "A" },
+                { text: "Приложение-помощник или телеграм-бот для учеников школы", type: "B" },
+                { text: "Волонтёрский центр или кружок психологической поддержки одноклассников", type: "V" },
+                { text: "Научный блог или подкаст о необъяснённых явлениях природы", type: "G" },
+                { text: "Спортивная секция во дворе или студия онлайн-тренировок", type: "D" }
+            ]
+        },
+        // ── Q16 ──
+        {
+            category: "Книга / фильм",
+            q: "Какой жанр книг или фильмов ты выбираешь чаще всего?",
+            options: [
+                { text: "Биографии художников, модных дизайнеров, кинорежиссёров", type: "A" },
+                { text: "Научная фантастика, истории про изобретателей и хакеров", type: "B" },
+                { text: "Драмы о дружбе, семье, преодолении трудностей", type: "V" },
+                { text: "Документальные фильмы о природе, детективы или научпоп", type: "G" },
+                { text: "Спортивные драмы, боевики, фильмы о путешествиях и приключениях", type: "D" }
+            ]
+        },
+        // ── Q17 ──
+        {
+            category: "Деньги vs Призвание",
+            q: "Тебе предлагают две работы. Ты выбираешь:",
+            options: [
+                { text: "Меньше денег, но каждый день рисуешь, снимаешь или создаёшь что-то своё", type: "A" },
+                { text: "Хорошая зарплата + работаешь с современными технологиями и кодом", type: "B" },
+                { text: "Средняя зарплата, но работа с людьми и ощущение, что ты им помогаешь", type: "V" },
+                { text: "Исследовательский проект с командой учёных, даже если долго до результата", type: "G" },
+                { text: "Работа связана с движением, соревнованиями или обучением спорту", type: "D" }
+            ]
+        },
+        // ── Q18 ──
+        {
+            category: "Школьные достижения",
+            q: "За что тебя чаще всего хвалят учителя или родители?",
+            options: [
+                { text: "За красивые поделки, рисунки, оформление или творческие идеи", type: "A" },
+                { text: "За аккуратные расчёты, логику, умение разобраться в технике", type: "B" },
+                { text: "За умение помирить одноклассников, помочь другу или стать лидером", type: "V" },
+                { text: "За глубокие знания, интересные вопросы и нестандартные мысли", type: "G" },
+                { text: "За спортивные результаты, энергию и активность на уроках", type: "D" }
+            ]
+        },
+        // ── Q19 ──
+        {
+            category: "Идеальный выходной",
+            q: "Опиши свой идеальный выходной день:",
+            options: [
+                { text: "Посетить выставку, галерею, мастер-класс по живописи или снять влог", type: "A" },
+                { text: "Разобрать старый гаджет, написать скрипт или пройти онлайн-курс по IT", type: "B" },
+                { text: "Провести день с друзьями, сходить в кино и поговорить по душам", type: "V" },
+                { text: "Поехать на природу, посетить музей или почитать книгу о тайнах мира", type: "G" },
+                { text: "Поход, велопрогулка, спортивный турнир или танцевальная вечеринка", type: "D" }
+            ]
+        },
+        // ── Q20 ──
+        {
+            category: "Страх на работе",
+            q: "Что тебя пугает в будущей профессии больше всего?",
+            options: [
+                { text: "Что придётся делать скучные, однотипные вещи без творчества", type: "A" },
+                { text: "Что задача окажется слишком простой и неинтересной технически", type: "B" },
+                { text: "Что придётся работать в одиночестве, без общения с людьми", type: "V" },
+                { text: "Что нельзя будет изучать новое — только делать одно и то же", type: "G" },
+                { text: "Что придётся сидеть за столом весь день без движения и активности", type: "D" }
+            ]
+        },
+        // ── Q21 ──
+        {
+            category: "Чрезвычайная ситуация",
+            q: "В классе проходит ярмарка профессий. Какой стенд тебя привлечёт первым?",
+            options: [
+                { text: "Стенд с дизайном, иллюстрацией и 3D-моделированием", type: "A" },
+                { text: "Стенд с программированием, робототехникой и кибербезопасностью", type: "B" },
+                { text: "Стенд с педагогикой, медициной и социальной работой", type: "V" },
+                { text: "Стенд с экологией, наукой, журналистикой и аналитикой данных", type: "G" },
+                { text: "Стенд с фитнесом, спортивной медициной и хореографией", type: "D" }
+            ]
+        },
+        // ── Q22 ──
+        {
+            category: "Реакция на ошибку",
+            q: "Ты сделал(а) ошибку в важном задании. Как ты реагируешь?",
+            options: [
+                { text: "Переделаю заново — мне важно, чтобы итог был красивым и аккуратным", type: "A" },
+                { text: "Найду баг в своих рассуждениях и разберусь, где именно пошло не так", type: "B" },
+                { text: "Попрошу помощи у одноклассника или учителя — вместе легче", type: "V" },
+                { text: "Изучу причину ошибки: мне важно понять систему, а не просто исправить", type: "G" },
+                { text: "Встряхнусь, выйду подвигаться и приступлю заново с новой энергией", type: "D" }
+            ]
+        },
+        // ── Q23 ──
+        {
+            category: "Интернет и соцсети",
+            q: "Что ты делаешь в интернете чаще всего?",
+            options: [
+                { text: "Смотрю видео о дизайне, рисовании, фотографии и черпаю вдохновение", type: "A" },
+                { text: "Читаю статьи об IT, смотрю туториалы по программированию или кибербезопасности", type: "B" },
+                { text: "Общаюсь в чатах, слежу за жизнью друзей, участвую в обсуждениях", type: "V" },
+                { text: "Читаю научпоп, новости науки, смотрю документальные ролики", type: "G" },
+                { text: "Смотрю спортивные трансляции, тренировочные видео или танцевальные баттлы", type: "D" }
+            ]
+        },
+        // ── Q24 ──
+        {
+            category: "Отношение к деньгам",
+            q: "Ты получил(а) неожиданно крупную сумму денег. Куда вложишь?",
+            options: [
+                { text: "Куплю планшет, профессиональную камеру или курс по дизайну", type: "A" },
+                { text: "Куплю мощный ноутбук, плату Arduino или онлайн-курс по разработке", type: "B" },
+                { text: "Потрачу на совместный поход с друзьями или благотворительность", type: "V" },
+                { text: "Куплю книги, микроскоп или запишусь на научную экспедицию", type: "G" },
+                { text: "Куплю спортивную экипировку, запишусь в секцию или на лагерь", type: "D" }
+            ]
+        },
+        // ── Q25 ──
+        {
+            category: "Мотивация",
+            q: "Что мотивирует тебя работать над проектом до самого конца?",
+            options: [
+                { text: "Возможность показать свою работу и получить признание за творчество", type: "A" },
+                { text: "Чувство, что ты создал(а) что-то реально работающее и полезное", type: "B" },
+                { text: "Осознание, что твоя работа помогает конкретным людям", type: "V" },
+                { text: "Открытие чего-то нового или решение сложной загадки", type: "G" },
+                { text: "Возможность победить, показать результат или выступить на сцене", type: "D" }
+            ]
+        },
+        // ── Q26 ──
+        {
+            category: "Твой кумир",
+            q: "Кем из известных людей ты восхищаешься больше всего?",
+            options: [
+                { text: "Пикассо, Стив Джобс (как дизайнер Apple), Уэс Андерсон — творцы стиля", type: "A" },
+                { text: "Илон Маск, Линус Торвальдс, Ада Лавлейс — инженеры и технари", type: "B" },
+                { text: "Мать Тереза, известный учитель или врач, изменивший жизни людей", type: "V" },
+                { text: "Мария Кюри, Стивен Хокинг, Дэвид Аттенборо — учёные и исследователи", type: "G" },
+                { text: "Серена Уильямс, Нурмагомедов, Майкл Фелпс — спортивные чемпионы", type: "D" }
+            ]
+        },
+        // ── Q27 ──
+        {
+            category: "Школьное событие",
+            q: "В школе организуют большое мероприятие. Какую роль ты возьмёшь?",
+            options: [
+                { text: "Сделаю оформление, нарисую баннер или сниму видеорепортаж", type: "A" },
+                { text: "Настрою звук, свет, проектор или создам программу для голосования", type: "B" },
+                { text: "Стану ведущим(ей), помогу гостям и прослежу, чтобы всем было комфортно", type: "V" },
+                { text: "Составлю программу, исследую лучшие форматы и напишу сценарий", type: "G" },
+                { text: "Подготовлю спортивный конкурс, танцевальный номер или шоу", type: "D" }
+            ]
+        },
+        // ── Q28 ──
+        {
+            category: "Работа в будущем",
+            q: "Каким ты видишь свой рабочий день через 15 лет?",
+            options: [
+                { text: "Просторная мастерская или студия, где я создаю что-то своими руками", type: "A" },
+                { text: "Рабочее место с несколькими мониторами, серверная или лаборатория", type: "B" },
+                { text: "Постоянные встречи, разговоры с людьми, помощь и поддержка команды", type: "V" },
+                { text: "Экспедиция, лаборатория или тихий кабинет с книгами и данными", type: "G" },
+                { text: "Зал, стадион, природа или сцена — главное, что я в движении", type: "D" }
+            ]
+        },
+        // ── Q29 ──
+        {
+            category: "Экзаменационный стресс",
+            q: "Перед важным испытанием ты обычно:",
+            options: [
+                { text: "Создаю красивые конспекты-схемы или майнд-мэпы, рисую ключевые понятия", type: "A" },
+                { text: "Делаю структурированные таблицы, пишу алгоритмы и разбираю задачи по шагам", type: "B" },
+                { text: "Готовлюсь вместе с другом — так намного легче и веселее", type: "V" },
+                { text: "Ищу первопричины и закономерности — мне важно понять суть, не зубрить", type: "G" },
+                { text: "Делаю физическую разминку, чтобы снять напряжение и зарядиться энергией", type: "D" }
+            ]
+        },
+        // ── Q30 ──
+        {
+            category: "Твоя миссия",
+            q: "Представь: ты прожил(а) долгую жизнь. Чем хочешь, чтобы тебя запомнили?",
+            options: [
+                { text: "«Он(а) создал(а) красоту, которая вдохновляла людей»", type: "A" },
+                { text: "«Он(а) построил(а) или изобрёл(а) то, чем все пользуются до сих пор»", type: "B" },
+                { text: "«Он(а) изменил(а) жизни людей в лучшую сторону»", type: "V" },
+                { text: "«Он(а) открыл(а) что-то важное и передал(а) знания следующим поколениям»", type: "G" },
+                { text: "«Он(а) доказал(а), что человек способен на невероятные физические достижения»", type: "D" }
+            ]
+        }
+    ];
+
+    // ============================================================
+    // ДАННЫЕ РЕЗУЛЬТАТОВ
+    // ============================================================
+    const resultsData = {
+        A: {
+            type: "🎨 ТВОРЧЕСКИЙ ТИП",
+            desc: "Ты любишь создавать красоту, придумывать новое и выражать себя через рисунок, дизайн, фото или видео.",
+            color: "#ff0055",
+            jobs: ["Художник-иллюстратор", "Дизайнер (графический, интерьеров, одежды)", "Фотограф / видеоблогер", "Архитектор", "Контент-креатор / SMM-специалист"],
+            future: ["3D-художник для игр и фильмов", "Создатель цифровой моды (виртуальная одежда)", "Дизайнер виртуальных пространств (метавселенные)", "Арт-директор нейросетевых проектов"],
+            try: ["Оформи плакат к школьному празднику", "Создай обложку для альбома класса в Canva", "Сними короткий ролик о жизни твоего класса", "Нарисуй персонажа для игры в Procreate или на бумаге"],
+            place: "Дома творчества, кружки «Юный художник», бесплатные курсы в «Точке кипения» (МФТИ) по цифровому искусству"
+        },
+        B: {
+            type: "⚙️ ТЕХНИЧЕСКИЙ ТИП",
+            desc: "Тебе нравится разбираться в технике, решать логические задачи и создавать работающие системы.",
+            color: "#00f3ff",
+            jobs: ["Программист / разработчик приложений", "Инженер (механик, электрик, строитель)", "Специалист по кибербезопасности", "Системный администратор", "Водитель БПЛА (дронов)"],
+            future: ["Инженер беспилотных систем", "Специалист по этике искусственного интеллекта", "Тренер ИИ (обучает нейросети)", "Квантовый программист"],
+            try: ["Собери простого робота на базе конструктора", "Создай сайт-визитку о себе (Tilda, Wix)", "Напиши простую игру в Scratch", "Пройди бесплатный курс Python на stepik.org"],
+            place: "Кванториумы в Подмосковье, курсы «Алгоритмика», школьные IT-кружки, профильные классы с уклоном в информатику"
+        },
+        V: {
+            type: "👥 СОЦИАЛЬНЫЙ ТИП",
+            desc: "Тебе нравится помогать людям, находить общий язык и создавать гармонию в коллективе.",
+            color: "#00ff9d",
+            jobs: ["Учитель / воспитатель", "Врач / медсестра", "Психолог / коуч", "Менеджер по персоналу", "Специалист по работе с клиентами"],
+            future: ["Коуч для подростков (помощь в выборе профессии)", "Специалист по цифровому этикету", "Медиатор (помогает решать конфликты)", "HR-аналитик с использованием ИИ"],
+            try: ["Проведи викторину для младших классов", "Организуй сбор книг или игрушек для детского дома", "Стань волонтёром на школьном мероприятии", "Попробуй роль старосты или организатора в классе"],
+            place: "Дома молодёжи (волонтёрские школы), курсы «Юный психолог», летние профильные смены в лагерях Подмосковья"
+        },
+        G: {
+            type: "🔬 ИССЛЕДОВАТЕЛЬСКИЙ ТИП",
+            desc: "Тебе нравится искать информацию, наблюдать за природой и находить закономерности.",
+            color: "#ffe600",
+            jobs: ["Биолог / эколог", "Геолог / метеоролог", "Лаборант / фармацевт", "Журналист-расследователь", "Дата-аналитик"],
+            future: ["Биоинформатик (работа с ДНК и данными)", "Климатический аналитик", "Специалист по космическому мусору", "Исследователь ИИ и нейросетей"],
+            try: ["Проведи наблюдение: какие птицы прилетают к кормушке зимой", "Собери гербарий растений школьного двора", "Напиши мини-исследование «Почему одноклассники любят разные игры»", "Пройди онлайн-олимпиаду по биологии или географии"],
+            place: "Юношеские академии наук при вузах, кружки «Юный натуралист» в заповедниках Подмосковья, летние экологические смены"
+        },
+        D: {
+            type: "🏃 КИНЕСТЕТИЧЕСКИЙ ТИП",
+            desc: "Ты любишь движение, спорт и танцы. Тебе важно чувствовать своё тело, развивать силу, ловкость и выносливость.",
+            color: "#ff6b35",
+            jobs: ["Спортсмен / тренер", "Хореограф / танцор", "Фитнес-инструктор", "Врач ЛФК / реабилитолог", "Спасатель / инструктор по туризму"],
+            future: ["Специалист по биомеханике движения", "Тренер по VR-фитнесу", "Киберспортивный аналитик", "Эксперт по реабилитации через технологии"],
+            try: ["Запишись на секцию по своему виду спорта", "Разучи новый танец по видеоуроку", "Организуй спортивный турнир между классами", "Попробуй трекинг с картой и компасом в ближайшем лесу"],
+            place: "Спортивные школы Подмосковья, фитнес-клубы, танцевальные студии, секции при ДК и домах молодёжи"
+        }
+    };
+
+    const typeNames = {
+        A: "Творческий",
+        B: "Технический",
+        V: "Социальный",
+        G: "Исследовательский",
+        D: "Кинестетический"
+    };
+
+    // ============================================================
+    // РЕНДЕР ВОПРОСОВ
+    // ============================================================
+    const quizContainer = document.getElementById('quiz-form');
+
+    questions.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.style.animationDelay = `${index * 0.07}s`;
+
+        const cat = document.createElement('span');
+        cat.className = 'question-category';
+        cat.innerText = item.category;
+        card.appendChild(cat);
+
+        const title = document.createElement('div');
+        title.className = 'question-title';
+        title.innerText = `Вопрос ${index + 1}: ${item.q}`;
+        card.appendChild(title);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        item.options.forEach((opt) => {
+            const label = document.createElement('label');
+            label.className = 'option-label';
+
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `q${index}`;
+            input.value = opt.type;
+            input.addEventListener('change', updateProgress);
+
+            const text = document.createElement('span');
+            text.innerText = opt.text;
+
+            label.appendChild(input);
+            label.appendChild(text);
+            optionsDiv.appendChild(label);
+        });
+
+        card.appendChild(optionsDiv);
+        quizContainer.appendChild(card);
+    });
+
+    function updateProgress() {
+        let answered = 0;
+        for (let i = 0; i < questions.length; i++) {
+            if (document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+        }
+        const pct = (answered / questions.length) * 100;
+        document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    // ============================================================
+    // ПОДСЧЁТ РЕЗУЛЬТАТА
+    // ============================================================
+    function calculateResult() {
+        let scores = { A: 0, B: 0, V: 0, G: 0, D: 0 };
+        let answeredDetails = [];
+        let allAnswered = true;
+
+        for (let i = 0; i < questions.length; i++) {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) { allAnswered = false; break; }
+            scores[selected.value]++;
+            answeredDetails.push({
+                question: questions[i].q,
+                answer: questions[i].options.find(o => o.type === selected.value).text,
+                type: selected.value
+            });
+        }
+
+        if (!allAnswered) {
+            alert("Пожалуйста, ответьте на все вопросы, чтобы получить точный результат!");
+            return;
+        }
+
+        let maxScore = 0;
+        let resultType = 'A';
+        for (const [key, value] of Object.entries(scores)) {
+            if (value > maxScore) { maxScore = value; resultType = key; }
+        }
+
+        displayResult(resultType, scores, answeredDetails);
+    }
+
+    // ============================================================
+    // ОТОБРАЖЕНИЕ РЕЗУЛЬТАТА
+    // ============================================================
+    function displayResult(type, scores, answeredDetails) {
+        const data = resultsData[type];
+
+        document.getElementById('quiz-form').style.display = 'none';
+        document.querySelector('.submit-btn').style.display = 'none';
+        document.getElementById('progress-fill').style.width = '100%';
+
+        document.getElementById('res-type').innerText = data.type;
+        document.getElementById('res-desc').innerText = data.desc;
+
+        // Score chart
+        const chartEl = document.getElementById('score-chart');
+        chartEl.innerHTML = '';
+        const maxVal = Math.max(...Object.values(scores));
+        Object.entries(scores).forEach(([key, val]) => {
+            const item = document.createElement('div');
+            item.className = 'score-bar-item';
+            const pct = maxVal > 0 ? (val / questions.length) * 100 : 0;
+            item.innerHTML = `
+                <div class="score-bar-label">${typeNames[key]}</div>
+                <div class="score-bar-track">
+                    <div class="score-bar-fill" style="height:${pct}%; background: ${resultsData[key].color}; opacity:${key===type?1:0.4};"></div>
+                </div>
+                <div class="score-bar-value">${val}</div>
+            `;
+            chartEl.appendChild(item);
+        });
+
+        // Jobs, future, try, place
+        ['jobs','future','try'].forEach(key => {
+            const el = document.getElementById(`res-${key}`);
+            el.innerHTML = '';
+            data[key].forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                el.appendChild(li);
+            });
+        });
+        document.getElementById('res-place').innerText = data.place;
+
+        document.getElementById('result-container').style.display = 'block';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        // Запрос к ИИ
+        getAIRecommendation(type, scores, answeredDetails);
+    }
+
+    // ============================================================
+    // ИИ РЕКОМЕНДАЦИИ ЧЕРЕЗ ANTHROPIC API
+    // ============================================================
+    async function getAIRecommendation(dominantType, scores, answeredDetails) {
+        const scoresSummary = Object.entries(scores)
+            .map(([k, v]) => `${typeNames[k]}: ${v}/${questions.length}`)
+            .join(', ');
+
+        const answersText = answeredDetails.map((a, i) =>
+            `${i+1}. ${a.question}\n   → ${a.answer}`
+        ).join('\n');
+
+        const prompt = `Ты — опытный профориентолог и карьерный консультант для школьников. Тебе нужно дать персональные рекомендации подростку на основе теста профориентации.
+
+РЕЗУЛЬТАТЫ ТЕСТА:
+Доминирующий тип: ${resultsData[dominantType].type}
+Распределение баллов: ${scoresSummary}
+
+ОТВЕТЫ НА ВОПРОСЫ:
+${answersText}
+
+Напиши персональный анализ на русском языке, структурируй его:
+
+1. **Кто ты**: 2-3 предложения о том, какой этот человек, что его отличает
+2. **Твои сильные стороны**: 3-4 конкретных качества, которые видны по ответам
+3. **Лучшие профессии именно для тебя**: 3-4 профессии с кратким объяснением почему
+4. **Неожиданный вариант**: 1 профессия, о которой ты, возможно, не думал(а), но она тебе подойдёт
+5. **Следующий шаг**: 1 конкретное действие, которое можно сделать уже сегодня
+
+Пиши тепло, вдохновляюще, как старший друг. Используй эмодзи. Без формальностей. Ответ — 200-250 слов.`;
+
+        try {
+            const response = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "claude-sonnet-4-20250514",
+                    max_tokens: 1000,
+                    messages: [{ role: "user", content: prompt }]
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.content && data.content[0] && data.content[0].text) {
+                document.getElementById('ai-recommendation').innerHTML =
+                    `<div class="ai-text">${escapeHtml(data.content[0].text)}</div>`;
+            } else {
+                throw new Error('Пустой ответ от API');
+            }
+        } catch (err) {
+            console.error('AI error:', err);
+            document.getElementById('ai-recommendation').innerHTML =
+                `<div class="ai-text" style="color:#aaa;">⚠️ ИИ-анализ временно недоступен. Посмотри результаты ниже — они уже дают хорошее направление!</div>`;
+        }
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+    }
+</script>
+</body>
+</html>
