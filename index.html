@@ -332,12 +332,11 @@ ${answersText}
 Тепло, как старший друг. Эмодзи приветствуются. 200-250 слов.`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('https://quiz-profession.margaret8519.workers.dev', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{role:'user', content: prompt}]})
     });
